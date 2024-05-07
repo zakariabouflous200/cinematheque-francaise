@@ -15,4 +15,6 @@ const fetchMovieDetailsByTitle = async (movieTitre) => {
   }
 };
 
+
+
 module.exports = { fetchMovieDetailsByTitle };

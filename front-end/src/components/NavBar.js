@@ -15,22 +15,24 @@ function Navbar() {
   const isLoggedIn = localStorage.getItem('token');
 
   return (
-    <nav className="bg-gray-800 p-4 flex justify-between items-center">
-      <Link to="/" className="text-white text-2xl font-bold">bouflix</Link>
+    <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md">
+      <Link to="/" className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-gold-500">bouflix</Link>
+      
       <div className="flex items-center">
-        <input type="text" placeholder="Rechercher un film..." className="bg-gray-700 text-white px-3 py-1 rounded-md mr-2" />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Rechercher</button>
+        <input type="text" placeholder="Rechercher un film..." className="bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent" />
+        <button className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200">Rechercher</button>
       </div>
       <div className="flex items-center">
         {isLoggedIn ? (
           <>
-            <Link to="/mylist" className="text-white mr-4">Ma Liste</Link>
-            <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Déconnexion</button>
+            <Link to="/mylist" className="mr-4 transition-colors duration-200 hover:text-gold-500">Ma Liste</Link>
+            <Link to="/cinemas" className="mr-4 transition-colors duration-200 hover:text-gold-500">Cinemas</Link>
+            <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors duration-200">Déconnexion</button>
           </>
         ) : (
           <>
-            <Link to="/login" className="text-white mr-4">Connexion</Link>
-            <Link to="/register" className="text-white">Inscription</Link>
+            <Link to="/login" className="mr-4 transition-colors duration-200 hover:text-gold-500">Connexion</Link>
+            <Link to="/register" className="transition-colors duration-200 hover:text-gold-500">Inscription</Link>
           </>
         )}
       </div>

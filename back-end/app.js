@@ -8,6 +8,8 @@ const importMoviesFromExcel = require('./importMovies');
 const watchExcelFile = require('./watchExcel');
 const usersRoutes = require('./routes/users');
 const moviesRoutes = require('./routes/movies');
+const cinemaRoutes = require('./routes/cinema');
+
 
 // URI de connexion MongoDB
 const mongoURI = process.env.MONGO_URI;
@@ -41,3 +43,6 @@ app.use(cors());
 // Routes de l'API
 app.use('/api/users', usersRoutes);
 app.use('/api/movies', moviesRoutes);
+app.use('/api/cinemas', cinemaRoutes);
+
+

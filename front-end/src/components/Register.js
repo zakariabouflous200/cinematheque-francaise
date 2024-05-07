@@ -46,26 +46,52 @@ function Register() {
   
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md">
-        <h2 className="text-3xl font-semibold mb-6 text-center">Inscription</h2>
-        {successMsg && <div className="mb-4 text-green-500">{successMsg}</div>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="p-10 bg-white rounded-lg shadow-xl w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Inscription</h2>
+        {successMsg && <div className="mb-4 text-green-500 text-center">{successMsg}</div>}
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <input type="text" name="username" placeholder="Nom d'utilisateur" onChange={handleChange} required className="mt-1 p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500" />
+            <input
+              type="text"
+              name="username"
+              placeholder="Nom d'utilisateur"
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded shadow focus:outline-none focus:border-gold-500"
+            />
           </div>
           <div>
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="mt-1 p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded shadow focus:outline-none focus:border-gold-500"
+            />
           </div>
           <div>
-            <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required className="mt-1 p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Mot de passe"
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded shadow focus:outline-none focus:border-gold-500"
+            />
           </div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-md focus:outline-none">S'inscrire</button>
+          <button
+            type="submit"
+            className="w-full bg-black hover:bg-gray-900 text-white py-3 px-4 rounded-md transition-colors duration-200"
+          >
+            S'inscrire
+          </button>
         </form>
       </div>
     </div>
-
   );
+  
 }
 
 export default Register;

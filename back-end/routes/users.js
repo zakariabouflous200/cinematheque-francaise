@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, addMovieToWatchlist, addWatchedMovie, addMovieToFavorites, getFavoriteMovies, getWatchedMovies, getWatchlistMovies} = require('../controllers/usersController');
+const { register, login, addMovieToWatchlist, addWatchedMovie, addMovieToFavorites, getFavoriteMovies, getWatchedMovies, getWatchlistMovies, removeMovieFromFavorites, removeWatchedMovie, removeMovieFromWatchlist} = require('../controllers/usersController');
 const authMiddleware = require('../auth');
 
 // Route d'inscription
@@ -26,6 +26,11 @@ router.get('/watchedMovies', authMiddleware, getWatchedMovies);
 
 // Route pour obtenir les films à regarder
 router.get('/watchlist', authMiddleware, getWatchlistMovies);
+
+router.delete('/removeFromFavorites', authMiddleware, removeMovieFromFavorites);
+router.delete('/removeWatchedMovie', authMiddleware, removeWatchedMovie);
+router.delete('/removeFromWatchlist', authMiddleware, removeMovieFromWatchlist);
+
 
 
 

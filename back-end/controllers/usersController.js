@@ -2,6 +2,8 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Movie = require('../models/movie');
+const fetch = require('node-fetch');
+const API_KEY = '675aefffc28aebcf0d5235bf1de90b15';
 
 
 // Fonction d'enregistrement d'un nouvel utilisateur
@@ -122,50 +124,123 @@ exports.addMovieToFavorites = async (req, res) => {
 
 
 // Fonction pour récupérer la liste des films favoris d'un utilisateur
-exports.getFavoriteMovies = async (req, res) => {
-  const userId = req.user.id;  
 
+exports.getFavoriteMovies = async (req, res) => {
   try {
+    const userId = req.user.id;
     const user = await User.findById(userId).populate('favoriteMovies');
+
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: 'User not found' });
     }
-    console.log(user.favoriteMovies);
-    res.json(user.favoriteMovies);
+
+    const moviesWithTMDbData = await Promise.all(user.favoriteMovies.map(async (movie) => {
+      const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(movie.titre)}`);
+      const data = await response.json();
+      return {
+        ...movie._doc,
+        tmdb: data.results[0] // Assuming the first result is the correct one
+      };
+    }));
+
+    res.json(moviesWithTMDbData);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
+    res.status(500).json({ message: "Error retrieving favorite movies", error });
   }
 };
 
+
+
 // Fonction pour récupérer la liste des films regardés par un utilisateur
 exports.getWatchedMovies = async (req, res) => {
-  const userId = req.user.id;  
-
   try {
+    const userId = req.user.id;
     const user = await User.findById(userId).populate('watchedMovies');
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user.watchedMovies);
+    const moviesWithTMDbData = await Promise.all(user.watchedMovies.map(async (movie) => {
+      const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(movie.titre)}`);
+      if (!response.ok) throw new Error('Failed to fetch TMDb data');
+      const tmdbData = await response.json();
+      return {
+        ...movie._doc,
+        tmdb: tmdbData.results[0]
+      };
+    }));
+
+    res.json(moviesWithTMDbData);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
+    console.error('Error fetching watched movies:', error);
+    res.status(500).json({ message: 'Error fetching watched movies', error });
   }
 };
 
 // Fonction pour récupérer la liste des films à regarder par un utilisateur
 exports.getWatchlistMovies = async (req, res) => {
-  const userId = req.user.id;
-
   try {
+    const userId = req.user.id;
     const user = await User.findById(userId).populate('watchlist');
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user.watchlist);
+    const moviesWithTMDbData = await Promise.all(user.watchlist.map(async (movie) => {
+      const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(movie.titre)}`);
+      if (!response.ok) throw new Error('Failed to fetch TMDb data');
+      const tmdbData = await response.json();
+      return {
+        ...movie._doc,
+        tmdb: tmdbData.results[0]
+      };
+    }));
+
+    res.json(moviesWithTMDbData);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
+    console.error('Error fetching watchlist:', error);
+    res.status(500).json({ message: 'Error fetching watchlist', error });
   }
 };
 
+// Remove movie from favorites
+exports.removeMovieFromFavorites = async (req, res) => {
+  const userId = req.user.id;
+  const { movieId } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      $pull: { favoriteMovies: movieId }
+    }, { new: true }).populate('favoriteMovies');
+    res.json(updatedUser.favoriteMovies);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// Remove a watched movie
+exports.removeWatchedMovie = async (req, res) => {
+  const userId = req.user.id;
+  const { movieId } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      $pull: { watchedMovies: movieId }
+    }, { new: true }).populate('watchedMovies');
+    res.json(updatedUser.watchedMovies);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// Remove a movie from watchlist
+exports.removeMovieFromWatchlist = async (req, res) => {
+  const userId = req.user.id;
+  const { movieId } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      $pull: { watchlist: movieId }
+    }, { new: true }).populate('watchlist');
+    res.json(updatedUser.watchlist);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

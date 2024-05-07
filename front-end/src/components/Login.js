@@ -39,19 +39,21 @@ function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="bg-white p-8 rounded shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Connexion</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email :</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required className="mt-1 p-2 border border-gray-300 rounded-md w-full" />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="p-10 bg-white rounded-lg shadow-xl w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Connexion</h2>
+        <form onSubmit={handleSubmit} className="mt-8">
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-800">Email :</label>
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded shadow focus:outline-none focus:border-gold-500" />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Mot de passe :</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} required className="mt-1 p-2 border border-gray-300 rounded-md w-full" />
+          <div className="mb-6">
+            <label className="block mb-2 text-sm font-bold text-gray-800">Mot de passe :</label>
+            <input type="password" name="password" value={formData.password} onChange={handleChange} required className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded shadow focus:outline-none focus:border-gold-500" />
           </div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Se connecter</button>
+          <button type="submit" className="w-full px-4 py-2 font-bold text-white bg-black rounded hover:bg-gray-900 focus:outline-none focus:shadow-outline">
+            Se connecter
+          </button>
         </form>
       </div>
     </div>

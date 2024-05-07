@@ -121,6 +121,8 @@ function MoviesList() {
     updateMovieList(movieId, 'addToFavorites');
   };
 
+  
+
     // Calcul du nombre total de pages et gestion de l'affichage des boutons de pagination
   const totalPages = Math.ceil(movies.length / moviesPerPage);
   const maxPageButtons = 5;
@@ -144,44 +146,45 @@ function MoviesList() {
   };
 
   return (
-    <div className="w-full bg-black">
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold my-4">Liste des Films</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="w-full bg-black text-white">
+      <div className="container mx-auto px-4 py-6">
+        <h2 className="text-3xl font-bold mb-6">Liste des Films</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {movies.slice((currentPage - 1) * moviesPerPage, currentPage * moviesPerPage).map((movie, index) => (
-            <div key={index} className="bg-white p-4 rounded-md shadow-md">
-              <h3 className="text-lg font-semibold mb-2">{movie.titre}</h3>
+            <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
               {movie.enrichedData && (
                 <div>
                   {movie.enrichedData.poster_path && (
-                    <img src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} alt={movie.titre} className="w-full rounded-md" />
-                    )}
-                    <p className="text-sm mb-2">{movie.enrichedData.overview}</p>
+                    <img src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} alt={movie.titre} className="w-full mb-3 rounded-lg" />
+                  )}
+                  <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview}</p>
                 </div>
               )}
-              <div className="mt-4">
-                <button onClick={() => addMovieToWatched(movie._id)} className="mr-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Marquer comme vu</button>
-                <button onClick={() => addMovieToList(movie._id)} className="mr-2 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">Ajouter à la liste à voir</button>
-                <button onClick={() => addMovieToFavorites(movie._id)} className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">Ajouter aux Favoris</button>
+              <div className="flex justify-between">
+                <button onClick={() => addMovieToWatched(movie._id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
+                <button onClick={() => addMovieToList(movie._id)} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
+                <button onClick={() => addMovieToFavorites(movie._id)} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
               </div>
             </div>
           ))}
         </div>
-        <div className="flex justify-center mt-4">
-          <button onClick={handlePrevPage} disabled={currentPage === 1} className="mr-2 px-3 py-1 bg-gray-300 rounded-md">Prev</button>
+        <div className="flex justify-center mt-8">
+          <button onClick={handlePrevPage} disabled={currentPage === 1} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Précédent</button>
           {[...Array(endPage - startPage + 1)].map((_, i) => (
-            <button key={startPage + i} onClick={() => setCurrentPage(startPage + i)} className={`mx-1 px-3 py-1 ${currentPage === startPage + i ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'} rounded-md`}>{startPage + i}</button>
+            <button key={startPage + i} onClick={() => setCurrentPage(startPage + i)} className={`px-4 py-2 rounded-md mx-1 ${currentPage === startPage + i ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}>{startPage + i}</button>
           ))}
           {endPage < totalPages ? (
             <>
-              <span className="mx-1">...</span>
-              <button onClick={() => setCurrentPage(totalPages)} className="mx-1 px-3 py-1 bg-gray-300 rounded-md">{totalPages}</button>
+              <span className="mx-2">...</span>
+              <button onClick={() => setCurrentPage(totalPages)} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md">{totalPages}</button>
             </>
           ) : null}
-          <button onClick={handleNextPage} disabled={currentPage === totalPages} className="ml-2 px-3 py-1 bg-gray-300 rounded-md">Next</button>
+          <button onClick={handleNextPage} disabled={currentPage === totalPages} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Suivant</button>
         </div>
       </div>
     </div>
   );
+  
 }
 export default MoviesList;
