@@ -1,0 +1,17 @@
+{
+  "phases": {
+    "install": {
+      "cmds": [
+        "cd front-end && npm install"
+      ]
+    },
+    "build": {
+      "cmds": [
+        "cd front-end && npm run build"
+      ]
+    },
+    "start": {
+      "cmd": "cd front-end && npm start"
+    }
+  }
+}
