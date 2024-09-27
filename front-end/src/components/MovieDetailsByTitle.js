@@ -59,7 +59,7 @@ function MovieDetailsByTitle() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${endpoint}`, {
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
