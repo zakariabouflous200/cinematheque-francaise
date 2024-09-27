@@ -25,7 +25,7 @@ function MoviesList() {
   // Fonction fetchAllMovies() pour récupérer la liste complète des films depuis le serveur
   const fetchAllMovies = async () => {
     try {
-      const response = await fetch('https://cinematheque-francaise.up.railway.app/api/movies/getAllMovies'); 
+      const response = await fetch('https://cinematheque-francaise.onrender.com/api/movies/getAllMovies'); 
       if (!response.ok) {
         throw new Error('Problème lors de la récupération des films');
       }
@@ -90,7 +90,7 @@ function MoviesList() {
 
     try {
       
-      const response = await fetch(`https://cinematheque-francaise.up.railway.app/api/users/${endpoint}`, {
+      const response = await fetch(`https://https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
