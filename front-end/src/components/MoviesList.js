@@ -185,7 +185,7 @@ function MoviesList() {
   const goToMovieDetails = (movieTitle) => {
     navigate(`/movies/${encodeURIComponent(movieTitle)}`);
   };
-return (
+  return (
   <div className="w-full bg-black text-white">
     <div className="container mx-auto px-4 py-6">
       <h2 className="text-3xl font-bold mb-6">Liste des Films</h2>
