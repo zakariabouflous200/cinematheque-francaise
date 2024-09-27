@@ -48,7 +48,7 @@ function MovieDetailsByTitle() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}` // Include token for authentication
         },
         body: JSON.stringify({ movieId }) // Send movieId to the backend
       });
@@ -64,8 +64,8 @@ function MovieDetailsByTitle() {
   };
 
   const addMovieToWatched = (movieId) => updateMovieList(movieId, 'addWatchedMovie');
-  const addMovieToWatchlist = (movieId) => updateMovieList(movieId, 'addMovieToWatchlist');
-  const addMovieToFavorites = (movieId) => updateMovieList(movieId, 'addMovieToFavorites');
+  const addMovieToWatchlist = (movieId) => updateMovieList(movieId, 'addMovieToWatchlist');  // Fixed endpoint
+  const addMovieToFavorites = (movieId) => updateMovieList(movieId, 'addMovieToFavorites');  // Fixed endpoint
 
   if (loading) return <p className="text-white text-center py-10">Loading movie details...</p>;
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
