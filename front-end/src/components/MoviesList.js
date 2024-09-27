@@ -130,10 +130,9 @@ function MoviesList() {
   // Generate page numbers for pagination with logic to handle first/last pages
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 2); // At least page 2
-    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages - 1); // At least 2 pages before last
+    const startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 2); 
+    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages - 1); 
 
-    // Always show the first page
     pageNumbers.push(
       <button
         key={1}
@@ -144,12 +143,10 @@ function MoviesList() {
       </button>
     );
 
-    // Show "..." if we're not near the first page
     if (startPage > 2) {
       pageNumbers.push(<span key="start-dots">...</span>);
     }
 
-    // Loop through the visible pages
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <button
@@ -162,12 +159,10 @@ function MoviesList() {
       );
     }
 
-    // Show "..." if there are more pages after the visible range
     if (endPage < totalPages - 1) {
       pageNumbers.push(<span key="end-dots">...</span>);
     }
 
-    // Always show the last page
     pageNumbers.push(
       <button
         key={totalPages}
@@ -181,9 +176,9 @@ function MoviesList() {
     return pageNumbers;
   };
 
-  // Navigate to the movie details page
+  // Ensure both search bar and movie list use the same route structure
   const goToMovieDetails = (movieTitle) => {
-    navigate(`/movies/${encodeURIComponent(movieTitle)}`);
+    navigate(`/movie-details/${encodeURIComponent(movieTitle)}`);
   };
 
   return (
@@ -195,7 +190,7 @@ function MoviesList() {
             <div 
               key={index} 
               className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer" 
-              onClick={() => goToMovieDetails(movie.titre)} // Redirect to details page
+              onClick={() => goToMovieDetails(movie.titre)} // Redirect to same details page as the search bar
             >
               <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
               {movie.enrichedData && (
