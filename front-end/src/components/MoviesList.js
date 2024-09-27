@@ -10,19 +10,7 @@ function MoviesList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch movies when component loads
     fetchData(currentPage);
-    // Handle lazy loading on scroll
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
-        if (currentPage < totalPages && !loading) {
-          setCurrentPage((prevPage) => prevPage + 1);  // Load next page
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
   // Fetch movies data from the API
@@ -31,7 +19,7 @@ function MoviesList() {
     try {
       const moviesData = await fetchAllMovies(page, moviesPerPage);
       const enrichedMoviesData = await enrichMovieData(moviesData.movies);  // Enrich data with TMDb
-      setMovies((prevMovies) => [...prevMovies, ...enrichedMoviesData]);  // Append new movies to existing ones
+      setMovies(enrichedMoviesData);  // Replace with the movies of the current page
       setTotalPages(moviesData.totalPages);  // Update total pages
     } catch (error) {
       console.error('Error fetching movie data:', error);
@@ -145,6 +133,23 @@ function MoviesList() {
     updateMovieList(movieId, 'addToFavorites');
   };
 
+  // Generate page numbers for pagination
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`px-4 py-2 rounded-md mx-1 ${currentPage === i ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+
   return (
     <div className="w-full bg-black text-white">
       <div className="container mx-auto px-4 py-6">
@@ -170,11 +175,7 @@ function MoviesList() {
           ))}
         </div>
         <div className="flex justify-center mt-8">
-          {loading ? (
-            <p>Loading more movies...</p>
-          ) : (
-            <button onClick={() => setCurrentPage((prevPage) => prevPage + 1)} disabled={currentPage === totalPages} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Charger plus de films</button>
-          )}
+          {renderPageNumbers()}
         </div>
       </div>
     </div>
