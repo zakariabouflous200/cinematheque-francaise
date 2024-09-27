@@ -1,4 +1,3 @@
-// MovieDetailsByTitle.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -14,23 +13,31 @@ function MovieDetailsByTitle() {
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        console.log(`Fetching movie details from TMDb for: ${title}`);  // Log the title being searched
+        console.log(`Fetching movie details from TMDb for: ${title}`);
 
-        // Fetch from TMDb API using the movie title
-        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${apiKey}`);
+        // Step 1: Fetch the movie by title using search API to get the movie ID
+        let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${apiKey}`);
         if (!response.ok) {
           throw new Error('Movie not found');
         }
 
-        const data = await response.json();
-        console.log('TMDb movie details:', data);
-
-        if (data.results.length === 0) {
+        const searchData = await response.json();
+        if (searchData.results.length === 0) {
           throw new Error('Movie not found on TMDb');
         }
 
-        // Use the first result from TMDb
-        const movieData = data.results[0];
+        // Get the movie ID from the first result
+        const movieId = searchData.results[0].id;
+
+        // Step 2: Fetch detailed information using the movie ID
+        response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch movie details');
+        }
+
+        const movieData = await response.json();
+        console.log('Full movie details:', movieData);
+
         setMovie(movieData);
         setLoading(false);
       } catch (error) {
@@ -52,9 +59,18 @@ function MovieDetailsByTitle() {
       {movie.poster_path && (
         <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={`${movie.title} Poster`} className="rounded-lg mb-4" />
       )}
+
       <p className="text-sm mb-4">{movie.overview || 'No overview available'}</p>
+
       <p><strong>Release Date:</strong> {movie.release_date || 'Unknown'}</p>
-      <p><strong>Rating:</strong> {movie.vote_average || 'Not rated'}</p>
+      <p><strong>Rating:</strong> {movie.vote_average || 'Not rated'} ({movie.vote_count} votes)</p>
+      <p><strong>Runtime:</strong> {movie.runtime ? `${movie.runtime} minutes` : 'Unknown'}</p>
+      <p><strong>Budget:</strong> {movie.budget ? `$${movie.budget.toLocaleString()}` : 'Unknown'}</p>
+      <p><strong>Revenue:</strong> {movie.revenue ? `$${movie.revenue.toLocaleString()}` : 'Unknown'}</p>
+      <p><strong>Genres:</strong> {movie.genres.map(genre => genre.name).join(', ') || 'Unknown'}</p>
+      <p><strong>Production Companies:</strong> {movie.production_companies.map(company => company.name).join(', ') || 'Unknown'}</p>
+      <p><strong>Tagline:</strong> {movie.tagline || 'No tagline available'}</p>
+      <p><strong>Status:</strong> {movie.status || 'Unknown'}</p>
     </div>
   );
 }
