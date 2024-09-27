@@ -59,35 +59,45 @@ function MoviesList() {
   };
 
   // Fonction fetchEnrichedMovieData() pour récupérer les détails enrichis d'un film à partir d'une API externe (TMDb)
-  const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
-    try {
-        let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=675aefffc28aebcf0d5235bf1de90b15`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch movie details from TMDb');
-        }
-        let data = await response.json();
-        if (data.results.length > 0) {
-            return data.results[0];
-        } else if (originalTitle) { 
-            response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=675aefffc28aebcf0d5235bf1de90b15`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch movie details from TMDb with titreOriginal');
-            }
-            data = await response.json();
-            if (data.results.length > 0) {
-                return data.results[0];
-            } else {
-                return null;
-            }
-        } else {
-            console.warn('Movie not found on TMDb with titre and no titreOriginal provided', movieTitle);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error fetching movie details:', error);
-        return null;
+ const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
+  try {
+    const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Ensure your API key is correctly placed here
+    let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch movie details from TMDb');
     }
-  };
+    
+    let data = await response.json();
+    
+    if (data.results.length > 0) {
+      return data.results[0];  // Return the first matching result
+    } else if (originalTitle) {
+      // If the movie title doesn't work, try the original title
+      response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch movie details from TMDb with original title');
+      }
+      
+      data = await response.json();
+      
+      if (data.results.length > 0) {
+        return data.results[0];
+      } else {
+        console.warn('No matching movie found on TMDb', movieTitle);
+        return null;  // Return null if no match found
+      }
+    } else {
+      console.warn('No matching movie found and no original title provided', movieTitle);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+    return null;
+  }
+};
+
 
   const updateMovieList = async (movieId, endpoint) => {
     const token = localStorage.getItem('token');
