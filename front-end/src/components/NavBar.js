@@ -47,7 +47,7 @@ function Navbar() {
 
   return (
     <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md relative">
-      <Link to="/" className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-gold-500">bouflix</Link>
+      <Link to="/" className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-gold-500">bouflous-cinema</Link>
       
       <div className="flex items-center relative">
         <input 
