@@ -1,18 +1,26 @@
 const Movie = require('../models/movie');
 const { fetchMovieDetailsByTitle,  } = require('../services/tmdbService');
 
-exports.getMovieById = async (req, res) => {
+// moviesController.js
+
+exports.getMovieByTitle = async (req, res) => {
   try {
-    const movieId = req.params.id;
-    const movie = await Movie.findById(movieId);
+    const movieTitle = req.params.title;
+    console.log(`Searching for movie with title: ${movieTitle}`);
+
+    // Use a case-insensitive search for the title
+    const movie = await Movie.findOne({ titre: new RegExp(`^${movieTitle}$`, 'i') });
+    
     if (!movie) {
       return res.status(404).json({ message: 'Movie not found' });
     }
+
     res.json(movie);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
 
 
 // Function to search movies by title
