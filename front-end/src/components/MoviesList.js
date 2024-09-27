@@ -216,9 +216,24 @@ function MoviesList() {
               </div>
             )}
             <div className="flex justify-between">
-              <button onClick={(e) => { e.stopPropagation(); addMovieToWatched(movie._id); }} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
-              <button onClick={(e) => { e.stopPropagation(); addMovieToList(movie._id); }} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
-              <button onClick={(e) => { e.stopPropagation(); addMovieToFavorites(movie._id); }} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToWatched(movie._id); }} 
+                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+              >
+                Vu
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToList(movie._id); }} 
+                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
+              >
+                À Voir
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToFavorites(movie._id); }} 
+                className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md"
+              >
+                Favoris
+              </button>
             </div>
           </div>
         ))}
@@ -229,3 +244,4 @@ function MoviesList() {
     </div>
   </div>
 );
+
