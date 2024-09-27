@@ -1,11 +1,12 @@
+// NavBar.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");  // State to store search term
-  const [searchResults, setSearchResults] = useState([]);  // State to store search results
-  const [showResults, setShowResults] = useState(false);  // State to toggle display of results
+  const [searchTerm, setSearchTerm] = useState("");  
+  const [searchResults, setSearchResults] = useState([]);  
+  const [showResults, setShowResults] = useState(false);
 
   // Function to handle search
   const handleSearch = async () => {
@@ -17,22 +18,26 @@ function Navbar() {
         throw new Error('Failed to fetch search results');
       }
       const data = await response.json();
-      setSearchResults(data);  // Update state with search results
-      setShowResults(true);  // Show search results
+      setSearchResults(data);  
+      setShowResults(true);  
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
 
-  // Function to handle user input
   const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);  // Update the search term state as the user types
+    setSearchTerm(e.target.value);
     if (e.target.value.trim() === "") {
-      setShowResults(false);  // Hide search results if input is empty
+      setShowResults(false);
     }
   };
 
-  // Function to handle logout
+  const handleMovieClick = (movieTitle) => {
+    navigate(`/movieByTitle/${encodeURIComponent(movieTitle)}`);  // Navigate using the title
+    setShowResults(false);
+    setSearchTerm("");
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
@@ -53,7 +58,7 @@ function Navbar() {
           className="bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent" 
         />
         <button 
-          onClick={handleSearch}  // Call the handleSearch function when clicked
+          onClick={handleSearch}  
           className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200"
         >
           Rechercher
@@ -62,15 +67,11 @@ function Navbar() {
         {/* Display Search Results */}
         {showResults && searchResults.length > 0 && (
           <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
-            {searchResults.map((movie, index) => (
+            {searchResults.map((movie) => (
               <div 
-                key={index} 
+                key={movie.titre} 
                 className="p-2 hover:bg-gray-700 cursor-pointer"
-                onClick={() => {
-                  navigate(`/movies/${movie._id}`);
-                  setShowResults(false);  // Hide results after selecting a movie
-                  setSearchTerm("");  // Clear search input
-                }}
+                onClick={() => handleMovieClick(movie.titre)}  // Use title instead of ID
               >
                 {movie.titre}
               </div>
