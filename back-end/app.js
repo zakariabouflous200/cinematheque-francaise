@@ -39,7 +39,7 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 // Middlewares
 app.use(express.json());
 app.use(cors({
-    origin: 'https://cinematheque-francaise.up.railway.app/', 
+    origin: 'https://cinematheque-francaise.vercel.app', 
 }));
 
 // Routes de l'API
