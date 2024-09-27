@@ -4,15 +4,18 @@ import { useNavigate } from 'react-router-dom';
 function MoviesList() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [moviesPerPage] = useState(10); // Reduced to 10 for better lazy loading
-  const [totalPages, setTotalPages] = useState(1); // To store total pages from the backend
+  const [moviesPerPage] = useState(10); // Reduced the number for better lazy loading
+  const [loading, setLoading] = useState(false); // Add loading state to prevent multiple requests
+  const [totalPages, setTotalPages] = useState(1); // Added to keep track of total pages
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
+    // Fetch movies when component loads
+    fetchData(currentPage);
+    // Handle lazy loading on scroll
     const handleScroll = () => {
       if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
-        if (currentPage < totalPages) {
+        if (currentPage < totalPages && !loading) {
           setCurrentPage((prevPage) => prevPage + 1);  // Load next page
         }
       }
@@ -22,18 +25,21 @@ function MoviesList() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
-  // Fonction fetchData() pour récupérer les données des films depuis l'API
-  const fetchData = async () => {
+  // Fetch movies data from the API
+  const fetchData = async (page) => {
+    setLoading(true); // Set loading to true to prevent multiple API requests
     try {
-      const { movies: newMovies, totalPages } = await fetchAllMovies(currentPage, moviesPerPage);
-      setMovies((prevMovies) => [...prevMovies, ...newMovies]);  // Append new movies
-      setTotalPages(totalPages);
+      const moviesData = await fetchAllMovies(page, moviesPerPage);
+      const enrichedMoviesData = await enrichMovieData(moviesData.movies);  // Enrich data with TMDb
+      setMovies((prevMovies) => [...prevMovies, ...enrichedMoviesData]);  // Append new movies to existing ones
+      setTotalPages(moviesData.totalPages);  // Update total pages
     } catch (error) {
       console.error('Error fetching movie data:', error);
     }
+    setLoading(false); // Set loading back to false when finished
   };
 
-  // Fonction fetchAllMovies() pour récupérer la liste complète des films depuis le serveur
+  // Fetch all movies from the backend API
   const fetchAllMovies = async (page = 1, limit = 10) => {
     try {
       const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getAllMovies?page=${page}&limit=${limit}`); 
@@ -41,14 +47,14 @@ function MoviesList() {
         throw new Error('Problème lors de la récupération des films');
       }
       const data = await response.json();
-      return data;
+      return data;  // Return movie data and total pages
     } catch (error) {
       console.error('Erreur lors de la récupération des films:', error);
       return [];
     }
   };
 
-  // Fonction enrichMovieData() pour enrichir les données des films avec des détails supplémentaires
+  // Enrich movies data with additional details from TMDb
   const enrichMovieData = async (moviesData) => {
     const enrichedMoviesData = [];
     for (const movie of moviesData) {
@@ -58,47 +64,47 @@ function MoviesList() {
     return enrichedMoviesData;
   };
 
-  // Fonction fetchEnrichedMovieData() pour récupérer les détails enrichis d'un film à partir d'une API externe (TMDb)
- const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
-  try {
-    const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Ensure your API key is correctly placed here
-    let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey}`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch movie details from TMDb');
-    }
-    
-    let data = await response.json();
-    
-    if (data.results.length > 0) {
-      return data.results[0];  // Return the first matching result
-    } else if (originalTitle) {
-      // If the movie title doesn't work, try the original title
-      response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey}`);
+  // Fetch additional movie data from TMDb
+  const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
+    try {
+      const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Ensure your API key is correctly placed here
+      let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey}`);
       
       if (!response.ok) {
-        throw new Error('Failed to fetch movie details from TMDb with original title');
+        throw new Error('Failed to fetch movie details from TMDb');
       }
       
-      data = await response.json();
+      let data = await response.json();
       
       if (data.results.length > 0) {
-        return data.results[0];
+        return data.results[0];  // Return the first matching result
+      } else if (originalTitle) {
+        // Try the original title if the first attempt fails
+        response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch movie details from TMDb with original title');
+        }
+        
+        data = await response.json();
+        
+        if (data.results.length > 0) {
+          return data.results[0];
+        } else {
+          console.warn('No matching movie found on TMDb', movieTitle);
+          return null;  // Return null if no match found
+        }
       } else {
-        console.warn('No matching movie found on TMDb', movieTitle);
-        return null;  // Return null if no match found
+        console.warn('No matching movie found and no original title provided', movieTitle);
+        return null;
       }
-    } else {
-      console.warn('No matching movie found and no original title provided', movieTitle);
+    } catch (error) {
+      console.error('Error fetching movie details:', error);
       return null;
     }
-  } catch (error) {
-    console.error('Error fetching movie details:', error);
-    return null;
-  }
-};
+  };
 
-
+  // Handle actions for updating the movie list (e.g., Watched, Favorites)
   const updateMovieList = async (movieId, endpoint) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -126,6 +132,7 @@ function MoviesList() {
     }
   };
 
+  // Add movies to the watched, list, or favorites
   const addMovieToWatched = (movieId) => {
     updateMovieList(movieId, 'addWatchedMovie');
   };
@@ -134,7 +141,7 @@ function MoviesList() {
     updateMovieList(movieId, 'addMovieToList');
   };
 
-  const addMovieToFavorites = async (movieId) => {
+  const addMovieToFavorites = (movieId) => {
     updateMovieList(movieId, 'addToFavorites');
   };
 
@@ -151,7 +158,7 @@ function MoviesList() {
                   {movie.enrichedData.poster_path && (
                     <img src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} alt={movie.titre} className="w-full mb-3 rounded-lg" />
                   )}
-                  <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview}</p>
+                  <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview || 'No overview available'}</p>
                 </div>
               )}
               <div className="flex justify-between">
@@ -163,7 +170,11 @@ function MoviesList() {
           ))}
         </div>
         <div className="flex justify-center mt-8">
-          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((prevPage) => prevPage + 1)} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Charger plus de films</button>
+          {loading ? (
+            <p>Loading more movies...</p>
+          ) : (
+            <button onClick={() => setCurrentPage((prevPage) => prevPage + 1)} disabled={currentPage === totalPages} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Charger plus de films</button>
+          )}
         </div>
       </div>
     </div>
