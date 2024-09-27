@@ -1,6 +1,18 @@
 const Movie = require('../models/movie');
 const { fetchMovieDetailsByTitle,  } = require('../services/tmdbService');
 
+// Function to search movies by title
+exports.searchMovies = async (req, res) => {
+  try {
+    const searchTerm = req.query.q;  // Get the search query
+    const regex = new RegExp(searchTerm, 'i');  // Create a case-insensitive regex
+    const movies = await Movie.find({ titre: { $regex: regex } });  // Search movies by title
+    res.json(movies);  // Return the results
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};
+
 // Fonction pour récupérer tous les films
 exports.getAllMovies = async (req, res) => {
   try {
