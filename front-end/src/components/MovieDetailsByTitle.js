@@ -109,33 +109,33 @@ function MovieDetailsByTitle() {
                     <p className="font-semibold">Genres:</p>
                     <p>{movie.genres.map(genre => genre.name).join(', ') || 'Unknown'}</p>
                   </div>
+
+                  {/* Production Companies */}
+                  {movie.production_companies && movie.production_companies.length > 0 && (
+                    <div className="col-span-2">
+                      <p className="font-semibold">Production Companies:</p>
+                      <div className="flex flex-wrap gap-4">
+                        {movie.production_companies.map(company => (
+                          <div key={company.id} className="flex items-center space-x-3">
+                            {company.logo_path && (
+                              <img
+                                src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
+                                alt={company.name}
+                                className="w-12 h-12 rounded"
+                              />
+                            )}
+                            <span>{company.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Production Companies */}
-      {movie.production_companies && movie.production_companies.length > 0 && (
-        <div className="container mx-auto px-4 py-12">
-          <h2 className="text-3xl font-bold text-gold-500 mb-6">Production Companies</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {movie.production_companies.map(company => (
-              <div key={company.id} className="flex items-center space-x-3">
-                {company.logo_path && (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
-                    alt={company.name}
-                    className="w-12 h-12 rounded"
-                  />
-                )}
-                <span>{company.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
