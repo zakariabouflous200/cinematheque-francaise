@@ -4,30 +4,29 @@ import { useNavigate } from 'react-router-dom';
 function MoviesList() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [moviesPerPage] = useState(10); // Reduced the number for better lazy loading
-  const [loading, setLoading] = useState(false); // Add loading state to prevent multiple requests
-  const [totalPages, setTotalPages] = useState(1); // Added to keep track of total pages
+  const [moviesPerPage] = useState(10); 
+  const [loading, setLoading] = useState(false); 
+  const [totalPages, setTotalPages] = useState(1); 
+  const maxVisiblePages = 5; // Maximum number of pages to show between first and last
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  // Fetch movies data from the API
   const fetchData = async (page) => {
-    setLoading(true); // Set loading to true to prevent multiple API requests
+    setLoading(true); 
     try {
       const moviesData = await fetchAllMovies(page, moviesPerPage);
-      const enrichedMoviesData = await enrichMovieData(moviesData.movies);  // Enrich data with TMDb
-      setMovies(enrichedMoviesData);  // Replace with the movies of the current page
-      setTotalPages(moviesData.totalPages);  // Update total pages
+      const enrichedMoviesData = await enrichMovieData(moviesData.movies); 
+      setMovies(enrichedMoviesData);  
+      setTotalPages(moviesData.totalPages);  
     } catch (error) {
       console.error('Error fetching movie data:', error);
     }
-    setLoading(false); // Set loading back to false when finished
+    setLoading(false); 
   };
 
-  // Fetch all movies from the backend API
   const fetchAllMovies = async (page = 1, limit = 10) => {
     try {
       const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getAllMovies?page=${page}&limit=${limit}`); 
@@ -35,14 +34,13 @@ function MoviesList() {
         throw new Error('Problème lors de la récupération des films');
       }
       const data = await response.json();
-      return data;  // Return movie data and total pages
+      return data;  
     } catch (error) {
       console.error('Erreur lors de la récupération des films:', error);
       return [];
     }
   };
 
-  // Enrich movies data with additional details from TMDb
   const enrichMovieData = async (moviesData) => {
     const enrichedMoviesData = [];
     for (const movie of moviesData) {
@@ -52,10 +50,9 @@ function MoviesList() {
     return enrichedMoviesData;
   };
 
-  // Fetch additional movie data from TMDb
   const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
     try {
-      const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Ensure your API key is correctly placed here
+      const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; 
       let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey}`);
       
       if (!response.ok) {
@@ -65,9 +62,8 @@ function MoviesList() {
       let data = await response.json();
       
       if (data.results.length > 0) {
-        return data.results[0];  // Return the first matching result
+        return data.results[0];  
       } else if (originalTitle) {
-        // Try the original title if the first attempt fails
         response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey}`);
         
         if (!response.ok) {
@@ -80,7 +76,7 @@ function MoviesList() {
           return data.results[0];
         } else {
           console.warn('No matching movie found on TMDb', movieTitle);
-          return null;  // Return null if no match found
+          return null;  
         }
       } else {
         console.warn('No matching movie found and no original title provided', movieTitle);
@@ -92,7 +88,6 @@ function MoviesList() {
     }
   };
 
-  // Handle actions for updating the movie list (e.g., Watched, Favorites)
   const updateMovieList = async (movieId, endpoint) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -120,7 +115,6 @@ function MoviesList() {
     }
   };
 
-  // Add movies to the watched, list, or favorites
   const addMovieToWatched = (movieId) => {
     updateMovieList(movieId, 'addWatchedMovie');
   };
@@ -133,10 +127,30 @@ function MoviesList() {
     updateMovieList(movieId, 'addToFavorites');
   };
 
-  // Generate page numbers for pagination
+  // Generate page numbers for pagination with logic to handle first/last pages
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
+    const startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 2); // At least page 2
+    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages - 1); // At least 2 pages before last
+
+    // Always show the first page
+    pageNumbers.push(
+      <button
+        key={1}
+        onClick={() => setCurrentPage(1)}
+        className={`px-4 py-2 rounded-md mx-1 ${currentPage === 1 ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
+      >
+        1
+      </button>
+    );
+
+    // Show "..." if we're not near the first page
+    if (startPage > 2) {
+      pageNumbers.push(<span key="start-dots">...</span>);
+    }
+
+    // Loop through the visible pages
+    for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <button
           key={i}
@@ -147,6 +161,23 @@ function MoviesList() {
         </button>
       );
     }
+
+    // Show "..." if there are more pages after the visible range
+    if (endPage < totalPages - 1) {
+      pageNumbers.push(<span key="end-dots">...</span>);
+    }
+
+    // Always show the last page
+    pageNumbers.push(
+      <button
+        key={totalPages}
+        onClick={() => setCurrentPage(totalPages)}
+        className={`px-4 py-2 rounded-md mx-1 ${currentPage === totalPages ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
+      >
+        {totalPages}
+      </button>
+    );
+
     return pageNumbers;
   };
 
@@ -182,4 +213,4 @@ function MoviesList() {
   );
 }
 
-export default MoviesList;
+export default MoviesList
