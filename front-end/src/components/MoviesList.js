@@ -29,7 +29,7 @@ function MoviesList() {
 
   const fetchAllMovies = async (page = 1, limit = 10) => {
     try {
-      const response = await fetch(https://cinematheque-francaise.onrender.com/api/movies/getAllMovies?page=${page}&limit=${limit}); 
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getAllMovies?page=${page}&limit=${limit}`); 
       if (!response.ok) {
         throw new Error('Problème lors de la récupération des films');
       }
@@ -53,7 +53,7 @@ function MoviesList() {
   const fetchEnrichedMovieData = async (movieTitle, originalTitle) => {
     try {
       const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; 
-      let response = await fetch(https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey});
+      let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movieTitle)}&api_key=${apiKey}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch movie details from TMDb');
@@ -64,7 +64,7 @@ function MoviesList() {
       if (data.results.length > 0) {
         return data.results[0];  
       } else if (originalTitle) {
-        response = await fetch(https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey});
+        response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=${apiKey}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch movie details from TMDb with original title');
@@ -96,17 +96,17 @@ function MoviesList() {
     }
 
     try {
-      const response = await fetch(https://cinematheque-francaise.onrender.com/api/users/${endpoint}, {
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': Bearer ${token}
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ movieId })
       });
 
       if (!response.ok) {
-        throw new Error(Problème lors de l'ajout du film à la liste);
+        throw new Error('Problème lors de l\'ajout du film à la liste');
       }
 
       alert('Film mis à jour dans votre liste avec succès !');
@@ -138,7 +138,7 @@ function MoviesList() {
       <button
         key={1}
         onClick={() => setCurrentPage(1)}
-        className={px-4 py-2 rounded-md mx-1 ${currentPage === 1 ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}}
+        className={`px-4 py-2 rounded-md mx-1 ${currentPage === 1 ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
       >
         1
       </button>
@@ -155,7 +155,7 @@ function MoviesList() {
         <button
           key={i}
           onClick={() => setCurrentPage(i)}
-          className={px-4 py-2 rounded-md mx-1 ${currentPage === i ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}}
+          className={`px-4 py-2 rounded-md mx-1 ${currentPage === i ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
         >
           {i}
         </button>
@@ -172,7 +172,7 @@ function MoviesList() {
       <button
         key={totalPages}
         onClick={() => setCurrentPage(totalPages)}
-        className={px-4 py-2 rounded-md mx-1 ${currentPage === totalPages ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}}
+        className={`px-4 py-2 rounded-md mx-1 ${currentPage === totalPages ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}
       >
         {totalPages}
       </button>
@@ -188,32 +188,31 @@ function MoviesList() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {movies.map((movie, index) => (
             <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-  <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
-  {movie.enrichedData && (
-    <div>
-      {movie.enrichedData.poster_path ? (
-        <img 
-          src={https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}} 
-          alt={movie.titre} 
-          className="w-full mb-3 rounded-lg" 
-        />
-      ) : (
-        <img 
-          src="https://via.placeholder.com/500x750?text=No+Image+Available" 
-          alt="Placeholder"
-          className="w-full mb-3 rounded-lg" 
-        />
-      )}
-      <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview || 'No overview available'}</p>
-    </div>
-  )}
-  <div className="flex justify-between">
-    <button onClick={() => addMovieToWatched(movie._id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
-    <button onClick={() => addMovieToList(movie._id)} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
-    <button onClick={() => addMovieToFavorites(movie._id)} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
-  </div>
-</div>
-
+              <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
+              {movie.enrichedData && (
+                <div>
+                  {movie.enrichedData.poster_path ? (
+                    <img 
+                      src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} 
+                      alt={movie.titre} 
+                      className="w-full mb-3 rounded-lg" 
+                    />
+                  ) : (
+                    <img 
+                      src="https://via.placeholder.com/500x750?text=No+Image+Available" 
+                      alt="Placeholder"
+                      className="w-full mb-3 rounded-lg" 
+                    />
+                  )}
+                  <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview || 'No overview available'}</p>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <button onClick={() => addMovieToWatched(movie._id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
+                <button onClick={() => addMovieToList(movie._id)} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
+                <button onClick={() => addMovieToFavorites(movie._id)} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
+              </div>
+            </div>
           ))}
         </div>
         <div className="flex justify-center mt-8">
@@ -224,4 +223,5 @@ function MoviesList() {
   );
 }
 
-export default MoviesList
+export default MoviesList;
+
