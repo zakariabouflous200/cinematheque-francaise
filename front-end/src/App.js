@@ -5,7 +5,7 @@ import Navbar from './components/NavBar';
 import MoviesList from './components/MoviesList';
 import MyListPage from './components/myListPage';
 import CinemaPage from './components/CinemaPage';
-
+import MovieDetailsByTitle from './components/MovieDetailsByTitle';
 
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/mylist" element={<MyListPage />} />
         <Route path="/cinemas" element={<CinemaPage />} />
+        <Route path="/movieByTitle/:title" element={<MovieDetailsByTitle />} />
       </Routes>
     </Router>
   );
