@@ -8,22 +8,22 @@ function MovieDetailsByTitle() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch the movie from your own backend (like in MoviesList.js)
+  // Fetch the movie from your own backend by title to get the movieId
   useEffect(() => {
     const fetchMovieFromBackend = async () => {
       try {
-        console.log(`Fetching movie details from your own backend for: ${title}`);
+        console.log(`Fetching movie details from your backend for title: ${title}`);
 
-        // Fetch the movie from your own backend by title
+        // Fetch the movie from your backend by title
         const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getMovieByTitle/${encodeURIComponent(title)}`);
         if (!response.ok) {
           throw new Error('Movie not found in your backend');
         }
 
         const movieData = await response.json();
-        console.log('Full movie details from backend:', movieData);
+        console.log('Movie data from backend:', movieData);
 
-        setMovie(movieData); // Set the movie data from your own database
+        setMovie(movieData); // Set the movie data (which includes movieId)
         setLoading(false);
       } catch (error) {
         console.error('Error fetching movie from backend:', error);
@@ -50,7 +50,7 @@ function MovieDetailsByTitle() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ movieId }) // Use movieId from your backend
+        body: JSON.stringify({ movieId }) // Send movieId to the backend
       });
 
       if (!response.ok) {
@@ -64,7 +64,7 @@ function MovieDetailsByTitle() {
   };
 
   const addMovieToWatched = (movieId) => updateMovieList(movieId, 'addWatchedMovie');
-  const addMovieToList = (movieId) => updateMovieList(movieId, 'addMovieToWatchlist');
+  const addMovieToWatchlist = (movieId) => updateMovieList(movieId, 'addMovieToWatchlist');
   const addMovieToFavorites = (movieId) => updateMovieList(movieId, 'addMovieToFavorites');
 
   if (loading) return <p className="text-white text-center py-10">Loading movie details...</p>;
@@ -152,19 +152,19 @@ function MovieDetailsByTitle() {
                 {/* Buttons to add the movie to lists */}
                 <div className="mt-8 flex space-x-4">
                   <button
-                    onClick={() => addMovieToWatched(movie._id)}  {/* Use internal movie ID */}
+                    onClick={() => addMovieToWatched(movie._id)}  // Use internal movieId from backend
                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Mark as Watched
                   </button>
                   <button
-                    onClick={() => addMovieToList(movie._id)}  {/* Use internal movie ID */}
+                    onClick={() => addMovieToWatchlist(movie._id)}  // Use internal movieId from backend
                     className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Watchlist
                   </button>
                   <button
-                    onClick={() => addMovieToFavorites(movie._id)}  {/* Use internal movie ID */}
+                    onClick={() => addMovieToFavorites(movie._id)}  // Use internal movieId from backend
                     className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Favorites
