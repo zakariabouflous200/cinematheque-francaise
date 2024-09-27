@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getAllMovies, details, moviesInCinemas, getMoviesAtFestivals, searchMovies  } = require('../controllers/moviesController'); 
-
+const { getAllMovies, details, moviesInCinemas, getMoviesAtFestivals, searchMovies, getMovieById  } = require('../controllers/moviesController'); 
+router.get('/getMovie/:id', getMovieById);
 // Route pour obtenir les détails d'un film
 router.get('/details', details);
 // Route to search movies by title
