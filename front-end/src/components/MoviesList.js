@@ -7,8 +7,8 @@ function MoviesList() {
   const [moviesPerPage] = useState(10); 
   const [loading, setLoading] = useState(false); 
   const [totalPages, setTotalPages] = useState(1); 
-  const maxVisiblePages = 5; // Maximum number of pages to show between first and last
-  const navigate = useNavigate();
+  const maxVisiblePages = 5; 
+  const navigate = useNavigate(); // To navigate to the details page
 
   useEffect(() => {
     fetchData(currentPage);
@@ -181,13 +181,22 @@ function MoviesList() {
     return pageNumbers;
   };
 
+  // Navigate to the movie details page
+  const goToMovieDetails = (movieTitle) => {
+    navigate(`/movies/${encodeURIComponent(movieTitle)}`);
+  };
+
   return (
     <div className="w-full bg-black text-white">
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-3xl font-bold mb-6">Liste des Films</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {movies.map((movie, index) => (
-            <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+            <div 
+              key={index} 
+              className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer" 
+              onClick={() => goToMovieDetails(movie.titre)} // Redirect to details page
+            >
               <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
               {movie.enrichedData && (
                 <div>
@@ -208,9 +217,9 @@ function MoviesList() {
                 </div>
               )}
               <div className="flex justify-between">
-                <button onClick={() => addMovieToWatched(movie._id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
-                <button onClick={() => addMovieToList(movie._id)} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
-                <button onClick={() => addMovieToFavorites(movie._id)} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
+                <button onClick={(e) => { e.stopPropagation(); addMovieToWatched(movie._id); }} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
+                <button onClick={(e) => { e.stopPropagation(); addMovieToList(movie._id); }} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
+                <button onClick={(e) => { e.stopPropagation(); addMovieToFavorites(movie._id); }} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px-4 rounded-md">Favoris</button>
               </div>
             </div>
           ))}
@@ -224,4 +233,3 @@ function MoviesList() {
 }
 
 export default MoviesList;
-
