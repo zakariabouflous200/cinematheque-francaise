@@ -36,7 +36,7 @@ function MovieDetailsByTitle() {
   }, [title]);
 
   // Handle adding the movie to user's list (watched, to watch, or favorites)
-  const updateMovieList = async (movieTitle, endpoint) => {
+  const updateMovieList = async (movieId, endpoint) => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
@@ -50,7 +50,7 @@ function MovieDetailsByTitle() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ title: movieTitle }) // Use movie title instead of movieId
+        body: JSON.stringify({ movieId }) // Use movieId from your backend
       });
 
       if (!response.ok) {
@@ -63,9 +63,9 @@ function MovieDetailsByTitle() {
     }
   };
 
-  const addMovieToWatched = (movieTitle) => updateMovieList(movieTitle, 'addWatchedMovie');
-  const addMovieToList = (movieTitle) => updateMovieList(movieTitle, 'addMovieToList');
-  const addMovieToFavorites = (movieTitle) => updateMovieList(movieTitle, 'addToFavorites');
+  const addMovieToWatched = (movieId) => updateMovieList(movieId, 'addWatchedMovie');
+  const addMovieToList = (movieId) => updateMovieList(movieId, 'addMovieToWatchlist');
+  const addMovieToFavorites = (movieId) => updateMovieList(movieId, 'addMovieToFavorites');
 
   if (loading) return <p className="text-white text-center py-10">Loading movie details...</p>;
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
@@ -152,19 +152,19 @@ function MovieDetailsByTitle() {
                 {/* Buttons to add the movie to lists */}
                 <div className="mt-8 flex space-x-4">
                   <button
-                    onClick={() => addMovieToWatched(movie.title)}  {/* Use movie title */}
+                    onClick={() => addMovieToWatched(movie._id)}  {/* Use internal movie ID */}
                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Mark as Watched
                   </button>
                   <button
-                    onClick={() => addMovieToList(movie.title)}  {/* Use movie title */}
+                    onClick={() => addMovieToList(movie._id)}  {/* Use internal movie ID */}
                     className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Watchlist
                   </button>
                   <button
-                    onClick={() => addMovieToFavorites(movie.title)}  {/* Use movie title */}
+                    onClick={() => addMovieToFavorites(movie._id)}  {/* Use internal movie ID */}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Favorites
