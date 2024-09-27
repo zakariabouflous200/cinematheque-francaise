@@ -124,11 +124,11 @@ function MovieDetailsByTitle() {
                   </div>
                   <div>
                     <p className="font-semibold">Genres:</p>
-                    <p>{movie.genres.map(genre => genre.name).join(', ') || 'Unknown'}</p>
+                    <p>{movie.genres ? movie.genres.map(genre => genre.name).join(', ') : 'Unknown'}</p>
                   </div>
 
                   {/* Production Companies */}
-                  {movie.production_companies && movie.production_companies.length > 0 && (
+                  {movie.production_companies && movie.production_companies.length > 0 ? (
                     <div className="col-span-2">
                       <p className="font-semibold">Production Companies:</p>
                       <div className="flex flex-wrap gap-4">
@@ -146,6 +146,8 @@ function MovieDetailsByTitle() {
                         ))}
                       </div>
                     </div>
+                  ) : (
+                    <p>No Production Companies Available</p>
                   )}
                 </div>
 
@@ -154,18 +156,21 @@ function MovieDetailsByTitle() {
                   <button
                     onClick={() => addMovieToWatched(movie._id)}  // Use internal movieId from backend
                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-300"
+                    disabled={!movie || !movie._id}  // Disable button if movie or _id is not defined
                   >
                     Mark as Watched
                   </button>
                   <button
                     onClick={() => addMovieToWatchlist(movie._id)}  // Use internal movieId from backend
                     className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-300"
+                    disabled={!movie || !movie._id}  // Disable button if movie or _id is not defined
                   >
                     Add to Watchlist
                   </button>
                   <button
                     onClick={() => addMovieToFavorites(movie._id)}  // Use internal movieId from backend
                     className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition duration-300"
+                    disabled={!movie || !movie._id}  // Disable button if movie or _id is not defined
                   >
                     Add to Favorites
                   </button>
