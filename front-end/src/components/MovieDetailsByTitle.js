@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function MovieDetailsByTitle() {
   const { title } = useParams(); // Get the movie title from the URL
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Replace with your TMDb API key
+  const navigate = useNavigate();
 
   // Fetch movie details from TMDb
   useEffect(() => {
@@ -49,6 +49,38 @@ function MovieDetailsByTitle() {
 
     fetchMovieDetails();
   }, [title, apiKey]);
+
+  // Handle adding the movie to user's list (watched, to watch, or favorites)
+  const updateMovieList = async (movieId, endpoint) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/users/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ movieId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update the movie list');
+      }
+
+      alert('Movie successfully added to your list!');
+    } catch (error) {
+      console.error('Error adding movie:', error);
+    }
+  };
+
+  const addMovieToWatched = (movieId) => updateMovieList(movieId, 'addWatchedMovie');
+  const addMovieToList = (movieId) => updateMovieList(movieId, 'addMovieToList');
+  const addMovieToFavorites = (movieId) => updateMovieList(movieId, 'addToFavorites');
 
   if (loading) return <p className="text-white text-center py-10">Loading movie details...</p>;
   if (error) return <p className="text-red-500 text-center py-10">{error}</p>;
@@ -131,6 +163,29 @@ function MovieDetailsByTitle() {
                     </div>
                   )}
                 </div>
+
+                {/* Buttons to add the movie to lists */}
+                <div className="mt-8 flex space-x-4">
+                  <button
+                    onClick={() => addMovieToWatched(movie.id)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-300"
+                  >
+                    Mark as Watched
+                  </button>
+                  <button
+                    onClick={() => addMovieToList(movie.id)}
+                    className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-300"
+                  >
+                    Add to Watchlist
+                  </button>
+                  <button
+                    onClick={() => addMovieToFavorites(movie.id)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition duration-300"
+                  >
+                    Add to Favorites
+                  </button>
+                </div>
+
               </div>
             </div>
           </div>
