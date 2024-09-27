@@ -20,12 +20,7 @@ function MovieDetailsByTitle() {
 
         if (tmdbData.results && tmdbData.results.length > 0) {
           const movieDetails = tmdbData.results[0];
-
-          // Fetch full movie details from TMDb
-          const fullMovieResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieDetails.id}?api_key=${tmdbApiKey}`);
-          const fullMovieData = await fullMovieResponse.json();
-
-          setMovie(fullMovieData);  // Set the movie data from TMDb
+          setMovie(movieDetails);  // Set the movie data from TMDb
           
           // Fetch movieId from your backend using title
           const backendResponse = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getMovieByTitle/${encodeURIComponent(title)}`);
@@ -135,60 +130,58 @@ function MovieDetailsByTitle() {
                   </div>
                   <div>
                     <p className="font-semibold">Genres:</p>
-                    <p>{movie.genres.map(genre => genre.name).join(', ') || 'Unknown'}</p>
+                    <p>{movie.genres ? movie.genres.map(genre => genre.name).join(', ') : 'Unknown'}</p>
+                  </div>
+
+                  {/* Production Companies */}
+                  {movie.production_companies && movie.production_companies.length > 0 && (
+                    <div className="col-span-2">
+                      <p className="font-semibold">Production Companies:</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {movie.production_companies.map(company => (
+                          <div key={company.id} className="flex items-center space-x-3">
+                            {company.logo_path && (
+                              <img
+                                src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
+                                alt={company.name}
+                                className="w-12 h-12 rounded"
+                              />
+                            )}
+                            <span>{company.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Buttons to add the movie to lists */}
+                  <div className="col-span-2 flex space-x-4 mt-6">
+                    <button
+                      onClick={addMovieToWatched}
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+                      disabled={!movieId}
+                    >
+                      Mark as Watched
+                    </button>
+                    <button
+                      onClick={addMovieToWatchlist}
+                      className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
+                      disabled={!movieId}
+                    >
+                      Add to Watchlist
+                    </button>
+                    <button
+                      onClick={addMovieToFavorites}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md"
+                      disabled={!movieId}
+                    >
+                      Add to Favorites
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Production Companies */}
-      {movie.production_companies && movie.production_companies.length > 0 && (
-        <div className="container mx-auto px-4 py-12">
-          <h2 className="text-3xl font-bold text-gold-500 mb-6">Production Companies</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {movie.production_companies.map(company => (
-              <div key={company.id} className="flex items-center space-x-3">
-                {company.logo_path && (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
-                    alt={company.name}
-                    className="w-12 h-12 rounded"
-                  />
-                )}
-                <span>{company.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Buttons to add the movie to lists */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex space-x-4">
-          <button
-            onClick={addMovieToWatched}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
-            disabled={!movieId}
-          >
-            Mark as Watched
-          </button>
-          <button
-            onClick={addMovieToWatchlist}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
-            disabled={!movieId}
-          >
-            Add to Watchlist
-          </button>
-          <button
-            onClick={addMovieToFavorites}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md"
-            disabled={!movieId}
-          >
-            Add to Favorites
-          </button>
         </div>
       </div>
     </div>
