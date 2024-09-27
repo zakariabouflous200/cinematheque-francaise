@@ -6,7 +6,7 @@ const CinemaList = ({ canUseLocation }) => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/cinemas/ile-de-france') // Ensure this is the correct URL
+        fetch('https://cinematheque-francaise.onrender.com/api/cinemas/ile-de-france') 
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to load cinemas');
