@@ -14,7 +14,7 @@ function MyListPage() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/users/${endpoint}`, {
+        const response = await fetch(`https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -60,7 +60,7 @@ function MyListPage() {
   const removeMovieFromList = async (movieId, endpoint, setter, listState, setListState) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${endpoint}`, {
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
