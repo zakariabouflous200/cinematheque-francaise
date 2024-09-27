@@ -1,27 +1,91 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");  // State to store search term
+  const [searchResults, setSearchResults] = useState([]);  // State to store search results
+  const [showResults, setShowResults] = useState(false);  // State to toggle display of results
 
-  // Fonction de déconnexion
+  // Function to handle search
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") return;
+
+    try {
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/search?q=${encodeURIComponent(searchTerm)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch search results');
+      }
+      const data = await response.json();
+      setSearchResults(data);  // Update state with search results
+      setShowResults(true);  // Show search results
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
+  // Function to handle user input
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);  // Update the search term state as the user types
+    if (e.target.value.trim() === "") {
+      setShowResults(false);  // Hide search results if input is empty
+    }
+  };
+
+  // Function to handle logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
-  
 
-    // Vérification de la connexion de l'utilisateur en vérifiant la présence du token JWT dans le stockage local
   const isLoggedIn = localStorage.getItem('token');
 
   return (
-    <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md">
+    <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md relative">
       <Link to="/" className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-gold-500">bouflix</Link>
       
-      <div className="flex items-center">
-        <input type="text" placeholder="Rechercher un film..." className="bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent" />
-        <button className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200">Rechercher</button>
+      <div className="flex items-center relative">
+        <input 
+          type="text" 
+          placeholder="Rechercher un film..." 
+          value={searchTerm} 
+          onChange={handleInputChange} 
+          className="bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent" 
+        />
+        <button 
+          onClick={handleSearch}  // Call the handleSearch function when clicked
+          className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200"
+        >
+          Rechercher
+        </button>
+
+        {/* Display Search Results */}
+        {showResults && searchResults.length > 0 && (
+          <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+            {searchResults.map((movie, index) => (
+              <div 
+                key={index} 
+                className="p-2 hover:bg-gray-700 cursor-pointer"
+                onClick={() => {
+                  navigate(`/movies/${movie._id}`);
+                  setShowResults(false);  // Hide results after selecting a movie
+                  setSearchTerm("");  // Clear search input
+                }}
+              >
+                {movie.titre}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* No results message */}
+        {showResults && searchResults.length === 0 && (
+          <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg p-2">
+            Aucun film trouvé.
+          </div>
+        )}
       </div>
+      
       <div className="flex items-center">
         {isLoggedIn ? (
           <>
@@ -39,6 +103,5 @@ function Navbar() {
     </nav>
   );
 }
-
 
 export default Navbar;
