@@ -15,7 +15,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('cinematheque-francaise-production.up.railway.app/api/users/login', {
+      const response = await fetch('https://cinematheque-francaise.onrender.com/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
