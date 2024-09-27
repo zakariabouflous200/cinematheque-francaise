@@ -14,7 +14,7 @@ function MovieDetailsByTitle() {
     const fetchMovieData = async () => {
       try {
         // Fetch movie details from TMDb API
-        const tmdbApiKey = 'YOUR_TMDB_API_KEY';  // Replace with your TMDb API key
+        const tmdbApiKey = '675aefffc28aebcf0d5235bf1de90b15';  // Replace with your TMDb API key
         const tmdbResponse = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${tmdbApiKey}`);
         const tmdbData = await tmdbResponse.json();
 
