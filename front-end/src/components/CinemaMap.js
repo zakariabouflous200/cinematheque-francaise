@@ -20,7 +20,7 @@ const CinemaMap = ({ cinemas }) => {
     useEffect(() => {
         const fetchAllMovies = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/movies/getAllMovies');
+                const response = await axios.get('https://cinematheque-francaise.onrender.com/api/movies/getAllMovies');
                 console.log('All movies data:', response.data);
                 setAllMovies(response.data);
             } catch (error) {
@@ -31,7 +31,7 @@ const CinemaMap = ({ cinemas }) => {
         const fetchFestivalMovies = async () => {
             setLoadingFestivals(true);
             try {
-                const response = await axios.get('http://localhost:8080/api/movies/movies-at-festivals');
+                const response = await axios.get('https://cinematheque-francaise.onrender.com/api/movies/movies-at-festivals');
                 console.log('Festival movies data:', response.data);
                 setFestivalMovies(response.data);
                 setLoadingFestivals(false);
