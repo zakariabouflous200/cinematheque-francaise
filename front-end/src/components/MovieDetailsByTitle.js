@@ -6,49 +6,34 @@ function MovieDetailsByTitle() {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const apiKey = '675aefffc28aebcf0d5235bf1de90b15'; // Replace with your TMDb API key
   const navigate = useNavigate();
 
-  // Fetch movie details from TMDb
+  // Fetch the movie from your own backend (like in MoviesList.js)
   useEffect(() => {
-    const fetchMovieDetails = async () => {
+    const fetchMovieFromBackend = async () => {
       try {
-        console.log(`Fetching movie details from TMDb for: ${title}`);
+        console.log(`Fetching movie details from your own backend for: ${title}`);
 
-        // Step 1: Fetch the movie by title using search API to get the movie ID
-        let response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${apiKey}`);
+        // Fetch the movie from your own backend by title
+        const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getMovieByTitle/${encodeURIComponent(title)}`);
         if (!response.ok) {
-          throw new Error('Movie not found');
-        }
-
-        const searchData = await response.json();
-        if (searchData.results.length === 0) {
-          throw new Error('Movie not found on TMDb');
-        }
-
-        // Get the movie ID from the first result
-        const movieId = searchData.results[0].id;
-
-        // Step 2: Fetch detailed information using the movie ID
-        response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch movie details');
+          throw new Error('Movie not found in your backend');
         }
 
         const movieData = await response.json();
-        console.log('Full movie details:', movieData);
+        console.log('Full movie details from backend:', movieData);
 
-        setMovie(movieData);
+        setMovie(movieData); // Set the movie data from your own database
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching movie from TMDb:', error);
+        console.error('Error fetching movie from backend:', error);
         setError(error.message);
         setLoading(false);
       }
     };
 
-    fetchMovieDetails();
-  }, [title, apiKey]);
+    fetchMovieFromBackend();
+  }, [title]);
 
   // Handle adding the movie to user's list (watched, to watch, or favorites)
   const updateMovieList = async (movieId, endpoint) => {
@@ -65,7 +50,7 @@ function MovieDetailsByTitle() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ movieId })
+        body: JSON.stringify({ movieId }) // Use movieId from your backend
       });
 
       if (!response.ok) {
@@ -167,19 +152,19 @@ function MovieDetailsByTitle() {
                 {/* Buttons to add the movie to lists */}
                 <div className="mt-8 flex space-x-4">
                   <button
-                    onClick={() => addMovieToWatched(movie.id)}
+                    onClick={() => addMovieToWatched(movie._id)}  {/* Use internal movie ID */}
                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Mark as Watched
                   </button>
                   <button
-                    onClick={() => addMovieToList(movie.id)}
+                    onClick={() => addMovieToList(movie._id)}  {/* Use internal movie ID */}
                     className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Watchlist
                   </button>
                   <button
-                    onClick={() => addMovieToFavorites(movie.id)}
+                    onClick={() => addMovieToFavorites(movie._id)}  {/* Use internal movie ID */}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition duration-300"
                   >
                     Add to Favorites
