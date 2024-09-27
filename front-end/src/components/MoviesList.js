@@ -4,28 +4,39 @@ import { useNavigate } from 'react-router-dom';
 function MoviesList() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [moviesPerPage] = useState(52);
+  const [moviesPerPage] = useState(10); // Reduced to 10 for better lazy loading
+  const [totalPages, setTotalPages] = useState(1); // To store total pages from the backend
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
+        if (currentPage < totalPages) {
+          setCurrentPage((prevPage) => prevPage + 1);  // Load next page
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
-    // Fonction fetchData() pour récupérer les données des films depuis l'API
+  // Fonction fetchData() pour récupérer les données des films depuis l'API
   const fetchData = async () => {
     try {
-      const moviesData = await fetchAllMovies();
-      const enrichedMoviesData = await enrichMovieData(moviesData);
-      setMovies(enrichedMoviesData);
+      const { movies: newMovies, totalPages } = await fetchAllMovies(currentPage, moviesPerPage);
+      setMovies((prevMovies) => [...prevMovies, ...newMovies]);  // Append new movies
+      setTotalPages(totalPages);
     } catch (error) {
       console.error('Error fetching movie data:', error);
     }
   };
 
   // Fonction fetchAllMovies() pour récupérer la liste complète des films depuis le serveur
-  const fetchAllMovies = async () => {
+  const fetchAllMovies = async (page = 1, limit = 10) => {
     try {
-      const response = await fetch('https://cinematheque-francaise.onrender.com/api/movies/getAllMovies'); 
+      const response = await fetch(`https://cinematheque-francaise.onrender.com/api/movies/getAllMovies?page=${page}&limit=${limit}`); 
       if (!response.ok) {
         throw new Error('Problème lors de la récupération des films');
       }
@@ -58,8 +69,6 @@ function MoviesList() {
         if (data.results.length > 0) {
             return data.results[0];
         } else if (originalTitle) { 
-            
-            // Retour à l'API TMDb avec titreOriginal
             response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(originalTitle)}&api_key=675aefffc28aebcf0d5235bf1de90b15`);
             if (!response.ok) {
                 throw new Error('Failed to fetch movie details from TMDb with titreOriginal');
@@ -68,7 +77,6 @@ function MoviesList() {
             if (data.results.length > 0) {
                 return data.results[0];
             } else {
-                
                 return null;
             }
         } else {
@@ -79,8 +87,8 @@ function MoviesList() {
         console.error('Error fetching movie details:', error);
         return null;
     }
-};
-  // Fonction updateMovieList() pour mettre à jour la liste des films de l'utilisateur (films favoris, vus et à voir)
+  };
+
   const updateMovieList = async (movieId, endpoint) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -89,7 +97,6 @@ function MoviesList() {
     }
 
     try {
-      
       const response = await fetch(`https://cinematheque-francaise.onrender.com/api/users/${endpoint}`, {
         method: 'POST',
         headers: {
@@ -108,8 +115,7 @@ function MoviesList() {
       console.error('Erreur lors de l\'ajout du film:', error);
     }
   };
-  
-// Appel de la fonction pour chaque liste de films
+
   const addMovieToWatched = (movieId) => {
     updateMovieList(movieId, 'addWatchedMovie');
   };
@@ -117,32 +123,9 @@ function MoviesList() {
   const addMovieToList = (movieId) => {
     updateMovieList(movieId, 'addMovieToList');
   };
+
   const addMovieToFavorites = async (movieId) => {
     updateMovieList(movieId, 'addToFavorites');
-  };
-
-  
-
-    // Calcul du nombre total de pages et gestion de l'affichage des boutons de pagination
-  const totalPages = Math.ceil(movies.length / moviesPerPage);
-  const maxPageButtons = 5;
-  let startPage = Math.max(currentPage - Math.floor(maxPageButtons / 2), 1);
-  let endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
-
-  if (endPage === totalPages) {
-    startPage = Math.max(totalPages - maxPageButtons + 1, 1);
-  } else if (endPage === currentPage) {
-    endPage = Math.min(currentPage + Math.floor(maxPageButtons / 2), totalPages);
-    startPage = Math.max(endPage - maxPageButtons + 1, 1);
-  }
-
-    // Fonctions handlePrevPage() et handleNextPage() pour la gestion de la pagination
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
 
   return (
@@ -150,7 +133,7 @@ function MoviesList() {
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-3xl font-bold mb-6">Liste des Films</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {movies.slice((currentPage - 1) * moviesPerPage, currentPage * moviesPerPage).map((movie, index) => (
+          {movies.map((movie, index) => (
             <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
               {movie.enrichedData && (
@@ -170,21 +153,11 @@ function MoviesList() {
           ))}
         </div>
         <div className="flex justify-center mt-8">
-          <button onClick={handlePrevPage} disabled={currentPage === 1} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Précédent</button>
-          {[...Array(endPage - startPage + 1)].map((_, i) => (
-            <button key={startPage + i} onClick={() => setCurrentPage(startPage + i)} className={`px-4 py-2 rounded-md mx-1 ${currentPage === startPage + i ? 'bg-gold-500 text-white' : 'bg-gray-300 text-black'}`}>{startPage + i}</button>
-          ))}
-          {endPage < totalPages ? (
-            <>
-              <span className="mx-2">...</span>
-              <button onClick={() => setCurrentPage(totalPages)} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md">{totalPages}</button>
-            </>
-          ) : null}
-          <button onClick={handleNextPage} disabled={currentPage === totalPages} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Suivant</button>
+          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((prevPage) => prevPage + 1)} className="text-black bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mx-2">Charger plus de films</button>
         </div>
       </div>
     </div>
   );
-  
 }
+
 export default MoviesList;
