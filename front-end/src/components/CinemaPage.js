@@ -7,7 +7,7 @@ const CinemaPage = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/cinemas/ile-de-france') // Make sure this URL is correct
+        fetch('https://cinematheque-francaise.onrender.com/api/cinemas/ile-de-france') // Make sure this URL is correct
             .then(response => response.json())
             .then(data => {
                 setCinemas(data);
