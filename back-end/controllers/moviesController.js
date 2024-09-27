@@ -4,8 +4,17 @@ const { fetchMovieDetailsByTitle,  } = require('../services/tmdbService');
 // Fonction pour récupérer tous les films
 exports.getAllMovies = async (req, res) => {
   try {
-    const movies = await Movie.find({}); 
-    res.json(movies); 
+    const { page = 1, limit = 10 } = req.query; // Default page=1 and limit=10
+    const movies = await Movie.find({})
+      .skip((page - 1) * limit)  // Skip previous pages
+      .limit(parseInt(limit));  // Limit the number of movies returned
+
+    const totalMovies = await Movie.countDocuments();  // Get total number of movies for pagination
+    res.json({
+      movies,
+      totalPages: Math.ceil(totalMovies / limit),
+      currentPage: parseInt(page)
+    });
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
