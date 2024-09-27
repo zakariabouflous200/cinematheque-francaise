@@ -178,7 +178,7 @@ function MoviesList() {
 
   // Use the same API route to get movie by title
   const goToMovieDetails = (movieTitle) => {
-    navigate(`/movie-details/${encodeURIComponent(movieTitle)}`);
+    navigate(`/movieByTitle/${encodeURIComponent(movieTitle)}`);
   };
 
   return (
