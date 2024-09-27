@@ -1,6 +1,20 @@
 const Movie = require('../models/movie');
 const { fetchMovieDetailsByTitle,  } = require('../services/tmdbService');
 
+exports.getMovieById = async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+    res.json(movie);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 // Function to search movies by title
 exports.searchMovies = async (req, res) => {
   try {
