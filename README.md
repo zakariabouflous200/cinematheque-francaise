@@ -12,5 +12,5 @@ Fonctionnalités:
   
 Technologies
 
-Frontend : Utilise React pour une interface utilisateur dynamique et réactive, avec des fonctionnalités de routage gérées par React Router et des requêtes HTTP via Axios.
-Backend : Construit avec Node.js et Express, utilisant MongoDB pour la base de données. Les modifications de données sont surveillées via Chokidar et les authentifications sont gérées par JWT.
+- Frontend : Utilise React pour une interface utilisateur dynamique et réactive, avec des fonctionnalités de routage gérées par React Router et des requêtes HTTP via Axios.
+- Backend : Construit avec Node.js et Express, utilisant MongoDB pour la base de données. Les modifications de données sont surveillées via Chokidar et les authentifications sont gérées par JWT.
