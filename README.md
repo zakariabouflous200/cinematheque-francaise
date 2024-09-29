@@ -1,5 +1,8 @@
+Bouflous-Cinema
+
 Vue d'ensemble du projet
-Bouflous-Cinema est une application web conçue pour permettre aux utilisateurs de découvrir et d'interagir avec une large gamme de films et de cinémas. L'application fournit des fonctionnalités telles que la gestion de listes personnelles de films à regarder, de films favoris et de films déjà vus, ainsi que des détails sur les cinémas et leurs séances programmées.
+
+- Bouflous-Cinema est une application web conçue pour permettre aux utilisateurs de découvrir et d'interagir avec une large gamme de films et de cinémas. L'application fournit des fonctionnalités telles que la gestion de listes personnelles de films à regarder, de films favoris et de films déjà vus, ainsi que des détails sur les cinémas et leurs séances programmées.
 
 Fonctionnalités:
 
