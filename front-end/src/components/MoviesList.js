@@ -182,49 +182,63 @@ function MoviesList() {
   };
 
   return (
-    <div className="w-full bg-black text-white">
-      <div className="container mx-auto px-4 py-6">
-        <h2 className="text-3xl font-bold mb-6">Liste des Films</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {movies.map((movie, index) => (
-            <div 
-              key={index} 
-              className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer" 
-              onClick={() => goToMovieDetails(movie.titre)} 
-            >
-              <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
-              {movie.enrichedData && (
-                <div>
-                  {movie.enrichedData.poster_path ? (
-                    <img 
-                      src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} 
-                      alt={movie.titre} 
-                      className="w-full mb-3 rounded-lg" 
-                    />
-                  ) : (
-                    <img 
-                      src="https://via.placeholder.com/500x750?text=No+Image+Available" 
-                      alt="Placeholder"
-                      className="w-full mb-3 rounded-lg" 
-                    />
-                  )}
-                  <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview || 'No overview available'}</p>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <button onClick={(e) => { e.stopPropagation(); addMovieToWatched(movie._id); }} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Vu</button>
-                <button onClick={(e) => { e.stopPropagation(); addMovieToList(movie._id); }} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">À Voir</button>
-                <button onClick={(e) => { e.stopPropagation(); addMovieToFavorites(movie._id); }} className="bg-gold-500 hover:bg-gold-600 text-white py-2 px rounded-md">Favoris</button>
+  <div className="w-full bg-black text-white min-h-screen">
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-3xl font-bold mb-6 text-center md:text-left">Liste des Films</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {movies.map((movie, index) => (
+          <div 
+            key={index} 
+            className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer flex flex-col justify-between" 
+            onClick={() => goToMovieDetails(movie.titre)} 
+          >
+            <h3 className="text-xl font-semibold mb-3">{movie.titre}</h3>
+            {movie.enrichedData && (
+              <div className="flex-grow">
+                {movie.enrichedData.poster_path ? (
+                  <img 
+                    src={`https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}`} 
+                    alt={movie.titre} 
+                    className="w-full h-64 object-cover mb-3 rounded-lg" 
+                  />
+                ) : (
+                  <img 
+                    src="https://via.placeholder.com/500x750?text=No+Image+Available" 
+                    alt="Placeholder"
+                    className="w-full h-64 object-cover mb-3 rounded-lg" 
+                  />
+                )}
+                <p className="text-sm text-gray-300 mb-4">{movie.enrichedData.overview || 'No overview available'}</p>
               </div>
+            )}
+            <div className="flex justify-between mt-4">
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToWatched(movie._id); }} 
+                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm"
+              >
+                Vu
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToList(movie._id); }} 
+                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md text-sm"
+              >
+                À Voir
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addMovieToFavorites(movie._id); }} 
+                className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md text-sm"
+              >
+                Favoris
+              </button>
             </div>
-          ))}
-        </div>
-        <div className="flex justify-center mt-8">
-          {renderPageNumbers()}
-        </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center mt-8">
+        {renderPageNumbers()}
       </div>
     </div>
-  );
-}
+  </div>
+);
 
 export default MoviesList;
