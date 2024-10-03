@@ -239,6 +239,6 @@ function MoviesList() {
       </div>
     </div>
   </div>
-);
-
+  );
+}
 export default MoviesList;
