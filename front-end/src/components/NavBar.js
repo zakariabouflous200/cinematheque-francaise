@@ -46,63 +46,96 @@ function Navbar() {
   const isLoggedIn = localStorage.getItem('token');
 
   return (
-    <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md relative">
-      <Link to="/" className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-gold-500">bouflous-cinema</Link>
-      
-      <div className="flex items-center relative">
-        <input 
-          type="text" 
-          placeholder="Rechercher un film..." 
-          value={searchTerm} 
-          onChange={handleInputChange} 
-          className="bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent" 
-        />
-        <button 
-          onClick={handleSearch}  
-          className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200"
-        >
-          Rechercher
-        </button>
+  <nav className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex justify-between items-center text-white shadow-md relative">
+    {/* Logo */}
+    <Link 
+      to="/" 
+      className="font-bold text-xl md:text-2xl transition-colors duration-200 hover:text-yellow-500"
+    >
+      bouflous-cinema
+    </Link>
 
-        {/* Display Search Results */}
-        {showResults && searchResults.length > 0 && (
-          <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
-            {searchResults.map((movie) => (
-              <div 
-                key={movie.titre} 
-                className="p-2 hover:bg-gray-700 cursor-pointer"
-                onClick={() => handleMovieClick(movie.titre)}  // Use title instead of ID
-              >
-                {movie.titre}
-              </div>
-            ))}
-          </div>
-        )}
+    {/* Search Bar */}
+    <div className="flex items-center relative w-full md:w-auto">
+      <input 
+        type="text" 
+        placeholder="Rechercher un film..." 
+        value={searchTerm} 
+        onChange={handleInputChange} 
+        className="w-full md:w-auto bg-gray-900 text-white px-3 py-1 rounded-md mr-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent" 
+      />
+      <button 
+        onClick={handleSearch}  
+        className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-md transition-colors duration-200"
+      >
+        Rechercher
+      </button>
 
-        {/* No results message */}
-        {showResults && searchResults.length === 0 && (
-          <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg p-2">
-            Aucun film trouvé.
-          </div>
-        )}
-      </div>
-      
-      <div className="flex items-center">
-        {isLoggedIn ? (
-          <>
-            <Link to="/mylist" className="mr-4 transition-colors duration-200 hover:text-gold-500">Ma Liste</Link>
-            <Link to="/cinemas" className="mr-4 transition-colors duration-200 hover:text-gold-500">Cinemas</Link>
-            <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors duration-200">Déconnexion</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="mr-4 transition-colors duration-200 hover:text-gold-500">Connexion</Link>
-            <Link to="/register" className="transition-colors duration-200 hover:text-gold-500">Inscription</Link>
-          </>
-        )}
-      </div>
-    </nav>
-  );
-}
+      {/* Display Search Results */}
+      {showResults && searchResults.length > 0 && (
+        <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+          {searchResults.map((movie) => (
+            <div 
+              key={movie.titre} 
+              className="p-2 hover:bg-gray-700 cursor-pointer"
+              onClick={() => handleMovieClick(movie.titre)}
+            >
+              {movie.titre}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* No results message */}
+      {showResults && searchResults.length === 0 && (
+        <div className="absolute top-full left-0 right-0 bg-gray-800 text-white mt-2 rounded-lg shadow-lg p-2">
+          Aucun film trouvé.
+        </div>
+      )}
+    </div>
+
+    {/* Menu Links */}
+    <div className="flex items-center space-x-4">
+      {isLoggedIn ? (
+        <>
+          <Link 
+            to="/mylist" 
+            className="transition-colors duration-200 hover:text-yellow-500"
+          >
+            Ma Liste
+          </Link>
+          <Link 
+            to="/cinemas" 
+            className="transition-colors duration-200 hover:text-yellow-500"
+          >
+            Cinemas
+          </Link>
+          <button 
+            onClick={handleLogout} 
+            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors duration-200"
+          >
+            Déconnexion
+          </button>
+        </>
+      ) : (
+        <>
+          <Link 
+            to="/login" 
+            className="transition-colors duration-200 hover:text-yellow-500"
+          >
+            Connexion
+          </Link>
+          <Link 
+            to="/register" 
+            className="transition-colors duration-200 hover:text-yellow-500"
+          >
+            Inscription
+          </Link>
+        </>
+      )}
+    </div>
+  </nav>
+);
+
 
 export default Navbar;
