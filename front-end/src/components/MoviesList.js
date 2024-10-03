@@ -197,7 +197,7 @@ function MoviesList() {
                 <div>
                   {movie.enrichedData.poster_path ? (
                     <img 
-                      src={https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path}} 
+                      src={https://image.tmdb.org/t/p/w500/${movie.enrichedData.poster_path} 
                       alt={movie.titre} 
                       className="w-full mb-3 rounded-lg" 
                     />
